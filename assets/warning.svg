@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2018 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="34mm" height="30mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 3400 3000"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <font id="FontID0" horiz-adv-x="667" font-variant="normal" style="fill-rule:nonzero" font-style="normal" font-weight="400">
+	<font-face 
+		font-family="Arial">
+		<font-face-src>
+			<font-face-name name="Arial"/>
+		</font-face-src>
+	</font-face>
+   <missing-glyph><path d="M0 0z"/></missing-glyph>
+   <glyph unicode="!" horiz-adv-x="277" d="M112.997 178l-26.9957 379.334 0 158.668 108.997 0 0 -158.668 -24.9985 -379.334 -57.0024 0zm-22.9952 -178l0 100 100.996 0 0 -100 -100.996 0z"/>
+  </font>
+  <style type="text/css">
+   <![CDATA[
+    @font-face { font-family:"Arial";font-variant:normal;font-style:normal;font-weight:normal;src:url("#FontID0") format(svg)}
+    .str0 {stroke:black;stroke-width:57.72;stroke-miterlimit:10}
+    .fil1 {fill:none;fill-rule:nonzero}
+    .fil2 {fill:#1B1D2E}
+    .fil0 {fill:#FDC30A;fill-rule:nonzero}
+    .fnt0 {font-weight:normal;font-size:1657.3px;font-family:'Arial'}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <g id="_2141092940928">
+   <path class="fil0" d="M1580.72 95.42l-1542.35 2671.41c-53.02,91.83 13.26,206.62 119.29,206.62l3084.68 0c106.04,0 172.31,-114.79 119.29,-206.62l-1542.34 -2671.41c-53.02,-91.83 -185.55,-91.83 -238.57,0z"/>
+   <line class="fil1 str0" x1="1645.38" y1="309.75" x2="256.32" y2= "2715.67" />
+   <path class="fil1 str0" d="M256.32 2715.67c-24.27,42.04 6.07,94.61 54.63,94.61"/>
+   <line class="fil1 str0" x1="310.95" y1="2810.28" x2="3089.06" y2= "2810.28" />
+   <path class="fil1 str0" d="M3089.06 2810.28c48.55,0 78.9,-52.57 54.62,-94.61"/>
+   <line class="fil1 str0" x1="3143.68" y1="2715.67" x2="1754.62" y2= "309.75" />
+   <path class="fil1 str0" d="M1754.62 309.75c-24.28,-42.05 -84.97,-42.05 -109.24,0"/>
+   <text x="1462.42" y="2480.33"  class="fil2 fnt0">!</text>
+  </g>
+ </g>
+</svg>

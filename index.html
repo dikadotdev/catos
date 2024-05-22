@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CatOS</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="icon" href="assets/cat-logo.png" />
+
+        <!-- Box Icons -->
+        <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+        <!-- Tailwind -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <!-- File Saver -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+        <!-- Html2PDF -->
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+            integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+        <!-- Toast -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            clifford: "#da373d",
+                        },
+                        animation: {
+                            loading: "loading 5s linear infinite",
+                        },
+                    },
+                },
+            };
+        </script>
+
+        <script type="module" src="">
+            import html2pdf from "html2pdf.js";
+        </script>
+
+        <style>
+            #main-wallpaper {
+                transition: opacity 0.5s ease-in-out, background-image 0.5s ease-in-out;
+                opacity: 1;
+            }
+
+            ::-webkit-scrollbar {
+                width: 10px;
+                border-radius: 1rem;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: orangered;
+                border-radius: 1rem;
+            }
+
+            @keyframes loading {
+                0% {
+                    width: 0;
+                }
+
+                50% {
+                    width: 15%;
+                }
+
+                75% {
+                    width: 85%;
+                }
+
+                100% {
+                    width: 100%;
+                }
+            }
+
+            .option-button {
+                padding: 4px 12px;
+                border-radius: 8px;
+            }
+            .active-option-button {
+                background: rgb(212, 212, 212);
+            }
+        </style>
+    </head>
+    <body class="bg-black">
+        <!-- Start : Layar Off -->
+        <div id="off-screen">
+            <div class="w-full min-h-screen bg-black text-white flex justify-center items-center">
+                <div class="flex flex-col justify-center items-center gap-4">
+                    <i class="bx bx-power-off text-9xl bg-green-500 hover:bg-green-700 transition-all rounded-full cursor-pointer" id="turn-on-button"></i>
+                    <p class="text-2xl font-bold">Turn On</p>
+                </div>
+            </div>
+        </div>
+        <!-- End : Layar Off -->
+
+        <!-- Start :  Layar Login -->
+        <div id="login-screen">
+            <div id="wallpaper-login-screen" class="w-full min-h-screen bg-[url('assets/wallpaper1.jpg')] backdrop-blur-lg bg-cover bg-no-repeat bg-center text-white flex justify-center items-center">
+                <div class="backdrop-blur-sm backdrop-brightness-50 w-full h-screen">
+                    <div class="flex flex-col justify-center items-center gap-6 h-full w-1/4 m-auto">
+                        <p class="text-2xl font-bold">Welcome to CatOS</p>
+                        <div class="w-[200px] h-[200px] bg-[url('assets/profile.jpg')] rounded-full bg-cover bg-center bg-no-repeat"></div>
+                        <p class="text-2xl font-bold">Holla, Andika Saputra</p>
+                        <div id="input-password">
+                            <input type="password" id="login-password" placeholder="Enter Your Password" class="w-[350px] px-3 py-2 rounded-md bg-gray-800 bg-opacity-50 border-gray-400 border outline-none" />
+                            <p class="px-2 mt-2 text-red-500 font-bold hidden" id="wrong-password">Wrong Password</p>
+                        </div>
+                        <p>* Password : 123</p>
+                        <button id="login-button" class="bg-gradient-to-r from-red-500 to-orange-400 hover:from-orange-400 hover:to-red-500 transition ease-in-out delay-150 text-white p-2 rounded-xl w-[350px]">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End :  Layar Login -->
+
+        <!-- Start : Blue Screen -->
+        <div id="blue-screen" class="hidden bg-[url('assets/warning-background.svg')] h-screen w-screen flex justify-center items-center bg-cover bg-center bg-no-repeat p-4">
+            <div class="bg-black w-full h-full flex justify-center items-center rounded-3xl">
+                <div class="flex justify-center flex-col items-center gap-4">
+                    <img src="assets/warning.svg" alt="" class="w-[300px]" />
+                    <p class="text-white text-6xl font-bold font-mono uppercase">WARNING!!</p>
+                    <p class="text-gray-400 text-2xl font-bold font-mono uppercase">Your Operating System Has Been Crashed</p>
+                    <button id="restart-bluescreen" class="bg-orange-500 text-white px-4 py-2 rounded-lg text-2xl">Please Restart</button>
+                </div>
+            </div>
+        </div>
+        <!-- End : Blue Screen -->
+
+        <!-- Start : Layar Utama -->
+        <div id="main-screen">
+            <div id="main-wallpaper" class="w-full min-h-screen bg-black bg-[url('assets/wallpaper1.jpg')] animation-opacity backdrop-blur-lg bg-cover bg-no-repeat bg-center text-white">
+                <div id="sleep-screen" class="hidden sleep-screen absolute left-0 right-0 top-0 bottom-0 bg-black z-[9999]"></div>
+                <div id="menu-top" class="bg-black bg-clip-padding backdrop-filter backdrop-blur-xl bg-opacity-30 left-0 right-0 top-0 px-6 py-3 absolute z-50 flex items-center justify-between">
+                    <!-- Shutdown Menu -->
+                    <div class="flex items-center gap-4">
+                        <img id="button-menu-shutdown" src="assets/cat-logo.svg" alt="" class="h-6 cursor-pointer" />
+                        <p>Holla, Andika Saputra</p>
+                        <div id="menu-shutdown" class="hidden whitespace-nowrap flex-col w-[150px] absolute bg-black bg-opacity-50 top-16 px-4 py-2 rounded-lg left-5 divide-y divide-gray-200">
+                            <p id="sleep" class="p-2 cursor-pointer">Sleep...</p>
+                            <p id="restart" class="p-2 cursor-pointer">Restart...</p>
+                            <p id="shutdown" class="p-2 cursor-pointer">Shutdown</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 items-center">
+                        <!-- Brightness -->
+                        <div class="relative">
+                            <i id="brightness-button" class="bx bxs-sun text-2xl cursor-pointer"></i>
+                            <div id="brightness-menu" class="hidden absolute left-1/2 transform -translate-x-1/2 top-14 bg-black bg-opacity-50 px-4 py-2 rounded-lg">
+                                <input type="range" min="20" max="100" value="60" class="accent-orange-400" id="brightness-control" />
+                            </div>
+                        </div>
+                        <!-- Wifi -->
+                        <div id="wifi" class="relative flex gap-2 items-center group">
+                            <i id="wifi-on" class="bx bx-wifi cursor-pointer text-2xl"></i>
+                            <i id="wifi-off" class="hidden bx bx-wifi-off cursor-pointer text-2xl"></i>
+                            <div class="hidden group-hover:flex whitespace-nowrap flex-col absolute bg-black bg-opacity-50 top-14 px-4 py-2 rounded-lg left-1/2 transform -translate-x-1/2">
+                                <p id="wifi-status">Connected To Internet</p>
+                            </div>
+                        </div>
+                        <!-- Battery -->
+                        <div id="battery" class="relative flex gap-2 items-center group">
+                            <i id="battery-charging" class="battery-icon bx bxs-battery-charging cursor-pointer text-2xl"></i>
+                            <i id="battery-low" class="battery-icon hidden bx bxs-battery-low cursor-pointer text-2xl"></i>
+                            <i id="battery-full" class="battery-icon hidden bx bxs-battery cursor-pointer text-2xl"></i>
+                            <div class="hidden group-hover:flex whitespace-nowrap flex-col absolute bg-black bg-opacity-50 top-14 px-4 py-2 rounded-lg left-1/2 transform -translate-x-1/2">
+                                <p id="battery-status" class="whitespace-nowrap">Status : Not Charging</p>
+                                <p id="battery-level">10%</p>
+                            </div>
+                        </div>
+                        <p id="tanggal"></p>
+                        <p id="jam"></p>
+                    </div>
+                </div>
+                <div class="container relative w-full min-h-screen m-auto">
+                    <!-- Menu -->
+                    <div id="menu" class="bg-gray-200 rounded-xl bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-25 absolute bottom-0 left-1/2 transform -translate-x-1/2 mb-4 px-3 py-2 flex gap-2 items-end">
+                        <div id="system-menu" class="w-20 h-20 cursor-pointer p-2 rounded-lg hover:w-28 hover:h-28 hover:bg-white hover:bg-opacity-20 transition-all relative group">
+                            <img src="assets/system.png" alt="" />
+                            <p class="hidden group-hover:block absolute left-1/2 overflow-hidden transform -translate-x-1/2 bg-black bg-opacity-20 px-4 py-2 rounded-md -top-16 transition-all ease-in-out duration-200">System</p>
+                        </div>
+                        <div id="finder-menu" class="w-20 h-20 cursor-pointer p-2 rounded-lg hover:w-28 hover:h-28 hover:bg-white hover:bg-opacity-20 transition-all relative group">
+                            <img src="assets/finder.png" alt="" />
+                            <p class="hidden group-hover:block absolute left-1/2 overflow-hidden transform -translate-x-1/2 bg-black bg-opacity-20 px-4 py-2 rounded-md -top-16 transition-all ease-in-out duration-200">Finder</p>
+                        </div>
+                        <div id="camera-menu" class="w-20 h-20 cursor-pointer p-2 rounded-lg hover:w-28 hover:h-28 hover:bg-white hover:bg-opacity-20 transition-all relative group">
+                            <img src="assets/camera.svg" alt="" />
+                            <p class="hidden group-hover:block absolute left-1/2 overflow-hidden transform -translate-x-1/2 bg-black bg-opacity-20 px-4 py-2 rounded-md -top-16 transition-all ease-in-out duration-200">Camera</p>
+                        </div>
+                        <div id="calculator-menu" class="w-20 h-20 cursor-pointer p-2 rounded-lg hover:w-28 hover:h-28 hover:bg-white hover:bg-opacity-20 transition-all relative group">
+                            <img src="assets/calculator.png" alt="" />
+                            <p class="hidden group-hover:block absolute left-1/2 overflow-hidden transform -translate-x-1/2 bg-black bg-opacity-20 px-4 py-2 rounded-md -top-16 transition-all ease-in-out duration-200">Calculator</p>
+                        </div>
+                        <div id="notes-menu" class="w-20 h-20 cursor-pointer p-2 rounded-lg hover:w-28 hover:h-28 hover:bg-white hover:bg-opacity-20 transition-all relative group">
+                            <img src="assets/notes.png" alt="" />
+                            <p class="hidden group-hover:block absolute left-1/2 overflow-hidden transform -translate-x-1/2 bg-black bg-opacity-20 px-4 py-2 rounded-md -top-16 transition-all ease-in-out duration-200">Note</p>
+                        </div>
+                        <div id="binary-menu" class="w-20 h-20 cursor-pointer p-2 rounded-lg hover:w-28 hover:h-28 hover:bg-white hover:bg-opacity-20 transition-all relative group">
+                            <img src="assets/binary.png" alt="" />
+                            <p class="hidden group-hover:block absolute left-1/2 overflow-hidden transform -translate-x-1/2 bg-black bg-opacity-20 px-4 py-2 rounded-md -top-16 transition-all ease-in-out duration-200">Binary</p>
+                        </div>
+                        <div id="paint-menu" class="w-20 h-20 cursor-pointer p-2 rounded-lg hover:w-28 hover:h-28 hover:bg-white hover:bg-opacity-20 transition-all relative group">
+                            <img src="assets/paint.png" alt="" />
+                            <p class="hidden group-hover:block absolute left-1/2 overflow-hidden transform -translate-x-1/2 bg-black bg-opacity-20 px-4 py-2 rounded-md -top-16 transition-all ease-in-out duration-200">Paint</p>
+                        </div>
+                    </div>
+
+                    <!-- Finder -->
+                    <div id="finder-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-3/4 h-[600px] rounded-xl flex transition-all">
+                        <div class="finder-left bg-gray-200 w-1/4 p-4 flex flex-col gap-4">
+                            <div class="flex gap-2">
+                                <div id="finder-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                            </div>
+                            <div class="flex flex-col gap-2 text-black">
+                                <p class="text-gray-400">Favorites</p>
+                                <div class="flex flex-col gap-1">
+                                    <p>AirDrop</p>
+                                    <p>Recents</p>
+                                    <p>Applications</p>
+                                    <p>Downloads</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-2 text-black">
+                                <p class="text-gray-400">iCloud</p>
+                                <div class="flex flex-col gap-1">
+                                    <p>iCloud Drive</p>
+                                    <p>Shared</p>
+                                    <p>Applications</p>
+                                    <p>Downloads</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="finder-right" class="bg-white w-full p-4 text-black">
+                            <div class="flex justify-between items-center mb-8">
+                                <div class="flex gap-2 items-center">
+                                    <i id="finder-back" class="finder-back bx bx-chevron-left text-2xl font-bold cursor-pointer text-gray-200"></i>
+                                    <p id="finder-path" class="text-md breadcrumb">This PC</p>
+                                    <i id="finder-next" class="bx bx-chevron-right text-2xl font-bold cursor-pointer"></i>
+                                </div>
+                            </div>
+                            <button class="hidden flex mb-4 w-full justify-center cursor-default" id="add-videos">
+                                <div class="relative cursor-pointer">
+                                    <div class="flex items-center gap-2 bg-green-500 px-3 py-1 text-white rounded-lg cursor-pointer">
+                                        <i class="fa-solid fa-plus"></i>
+                                        <p>Add Movies File</p>
+                                    </div>
+                                    <input accept="video/*" type="file" name="" id="" class="add-videos absolute top-0 right-0 opacity-0 w-full h-full cursor-pointer" />
+                                </div>
+                            </button>
+                            <button class="hidden flex mb-4 w-full justify-center cursor-default" id="add-audios">
+                                <div class="relative cursor-pointer">
+                                    <div class="flex items-center gap-2 bg-green-500 px-3 py-1 text-white rounded-lg cursor-pointer">
+                                        <i class="fa-solid fa-plus"></i>
+                                        <p>Add Audio File</p>
+                                    </div>
+                                    <input accept="audio/*" type="file" name="" id="" class="add-audios absolute top-0 right-0 opacity-0 w-full h-full cursor-pointer" />
+                                </div>
+                            </button>
+                            <button class="hidden flex mb-4 w-full justify-center cursor-default" id="add-pictures">
+                                <div class="relative cursor-pointer">
+                                    <div class="flex items-center gap-2 bg-green-500 px-3 py-1 text-white rounded-lg cursor-pointer">
+                                        <i class="fa-solid fa-plus"></i>
+                                        <p>Add Picture File</p>
+                                    </div>
+                                    <input accept="image/*" type="file" name="" id="" class="add-pictures absolute top-0 right-0 opacity-0 w-full h-full cursor-pointer" />
+                                </div>
+                            </button>
+                            <div id="finder-data" class="flex flex-wrap gap-6"></div>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div id="notes-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-3/4 h-[600px] rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="notes-top" class="p-4 bg-gray-100 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="notes-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <div id="notes-title" class="flex gap-2 w-fit overflow-x-auto"></div>
+                                <i class="notes-add bx bx-plus text-black p-1 rounded-full cursor-pointer hover:bg-gray-200 transition-all"></i>
+                            </div>
+                            <div id="notes-bottom" class="mt-20 w-[95%] mx-auto flex flex-col items-end">
+                                <div class="w-full flex justify-between">
+                                    <div class="options text-black flex gap-6 items-center text-xl">
+                                        <!-- Text Format -->
+                                        <button id="bold" class="option-button format">
+                                            <i class="fa-solid fa-bold"></i>
+                                        </button>
+                                        <button id="italic" class="option-button format">
+                                            <i class="fa-solid fa-italic"></i>
+                                        </button>
+                                        <button id="underline" class="option-button format">
+                                            <i class="fa-solid fa-underline"></i>
+                                        </button>
+                                        <button id="strikethrough" class="option-button format">
+                                            <i class="fa-solid fa-strikethrough"></i>
+                                        </button>
+                                        <button id="superscript" class="option-button script">
+                                            <i class="fa-solid fa-superscript"></i>
+                                        </button>
+                                        <button id="subscript" class="option-button script">
+                                            <i class="fa-solid fa-subscript"></i>
+                                        </button>
+
+                                        <!-- Alignment -->
+                                        <button id="justifyLeft" class="option-button align">
+                                            <i class="fa-solid fa-align-left"></i>
+                                        </button>
+                                        <button id="justifyCenter" class="option-button align">
+                                            <i class="fa-solid fa-align-center"></i>
+                                        </button>
+                                        <button id="justifyRight" class="option-button align">
+                                            <i class="fa-solid fa-align-right"></i>
+                                        </button>
+                                        <button id="justifyFull" class="option-button align">
+                                            <i class="fa-solid fa-align-justify"></i>
+                                        </button>
+
+                                        <!-- Font -->
+                                        <select id="fontSize" class="adv-option-button"></select>
+                                    </div>
+                                    <button id="save-note" class="save-note text-lime-950 px-4 py-1 rounded-md bg-lime-400 hover:bg-lime-500 transition-all ease-in-out duration-200">Save</button>
+                                </div>
+                                <div id="notes-content" contenteditable="true" rows="20" class="outline notes-content w-full h-[450px] resize-none rounded-md mt-4 p-4 mb-4 text-black overflow-hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System -->
+                    <div id="system-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-3/4 h-[600px] rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="system-top" class="p-4 bg-gray-100 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="system-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                            </div>
+                            <div id="system-bottom" class="mt-14 p-4 flex flex-col gap-4">
+                                <p class="text-black text-xl">Change Your Wallpaper</p>
+                                <div class="gap-8 grid grid-cols-5 h-[500px] py-8 ps-4 pe-8 overflow-y-scroll" id="wallpaper-images"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera -->
+                    <div id="camera-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-[46%] h-[600px] rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="camera-top" class="p-4 bg-gray-100 flex items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="camera-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-black text-xl flex justify-center w-full">Camera</p>
+                            </div>
+                            <div id="camera-bottom" class="mt-14 p-3 flex flex-col gap-4 relative items-end">
+                                <video id="videoElement" class="rounded-xl w-full h-[515px]" autoplay></video>
+                                <i id="camera-capture" class="bx bxs-camera bg-white text-black rounded-full text-5xl mb-8 cursor-pointer p-4 absolute bottom-0 left-1/2 transform -translate-x-1/2"></i>
+                                <canvas id="camera-output" class="hidden w-[100px] h-[80px] absolute bottom-6 left-6 rounded-xl"></canvas>
+                                <img id="result" class="w-[100px] h-[80px] absolute bottom-6 left-6 rounded-xl bg-white" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculator -->
+                    <div id="calculator-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 w-[30%] h-auto rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="calculator-top" class="p-4 bg-gray-700 flex items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="calculator-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-white text-xl flex justify-center w-full">Calculator</p>
+                            </div>
+                            <div id="calculator-bottom" class="mt-14 p-3 relative">
+                                <form class="w-full flex flex-col items-end h-full">
+                                    <input autocomplete="off" type="text" class="caret-transparent text-6xl mb-4 bg-gray-800 w-full outline-none text-end" id="result-calculator" name="display" />
+                                    <div class="grid grid-cols-4 w-full gap-4">
+                                        <input
+                                            value="AC"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value = ''"
+                                        />
+                                        <input
+                                            value="DEL"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value = display.value.toString().slice(0, -1)"
+                                        />
+
+                                        <input
+                                            value="%"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '%'"
+                                        />
+                                        <input
+                                            value="/"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-yellow-300 hover:bg-yellow-400 transition-all py-4 rounded-xl text-2xl font-bold text-gray-700"
+                                            onclick="display.value += '/'"
+                                        />
+                                        <input
+                                            value="7"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '7'"
+                                        />
+                                        <input
+                                            value="8"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '8'"
+                                        />
+                                        <input
+                                            value="9"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '9'"
+                                        />
+                                        <input
+                                            value="x"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-yellow-300 hover:bg-yellow-400 transition-all py-4 rounded-xl text-3xl font-bold text-gray-700"
+                                            onclick="display.value += '*'"
+                                        />
+
+                                        <input
+                                            value="4"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '4'"
+                                        />
+                                        <input
+                                            value="5"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '5'"
+                                        />
+                                        <input
+                                            value="6"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '6'"
+                                        />
+                                        <input
+                                            value="-"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-yellow-300 hover:bg-yellow-400 transition-all py-4 rounded-xl text-4xl font-bold text-gray-700"
+                                            onclick="display.value += '-'"
+                                        />
+
+                                        <input
+                                            value="1"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '1'"
+                                        />
+                                        <input
+                                            value="2"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '2'"
+                                        />
+                                        <input
+                                            value="3"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '3'"
+                                        />
+                                        <input
+                                            value="+"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-yellow-300 hover:bg-yellow-400 transition-all py-4 rounded-xl text-3xl font-bold text-gray-700"
+                                            onclick="display.value += '+'"
+                                        />
+
+                                        <input
+                                            value="0"
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 col-span-2 transition-all py-4 rounded-xl text-2xl text-yellow-300"
+                                            onclick="display.value += '0'"
+                                        />
+                                        <input
+                                            value="."
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-gray-700 hover:bg-gray-600 transition-all py-4 rounded-xl text-2xl font-bold text-yellow-300"
+                                            onclick="display.value += '.'"
+                                        />
+                                        <input
+                                            value="="
+                                            class="caret-transparent text-center outline-none cursor-pointer bg-yellow-300 hover:bg-yellow-400 transition-all py-4 rounded-xl text-4xl font-bold text-gray-700"
+                                            onclick="display.value = eval(display.value)"
+                                        />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Binary -->
+                    <div id="binary-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-gray-800 w-2/4 h-[600px] rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="binary-top" class="p-4 bg-gray-700 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="binary-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-white text-xl flex justify-center w-full">Binary App</p>
+                            </div>
+                            <div id="binary-bottom" class="mt-20 bg-gray-800 p-4 flex flex-col gap-8">
+                                <div class="flex gap-4 justify-center">
+                                    <button class="button-text px-4 py-3 bg-cyan-200 rounded-lg text-black">Text To Binary</button>
+                                    <button class="button-binary px-4 py-3 bg-cyan-200 rounded-lg text-black">Binary To Text</button>
+                                </div>
+                                <form id="text-form" action="" class="flex flex-col gap-4">
+                                    <p class="text-center text-2xl font-bold">TEXT TO BINARY</p>
+                                    <input type="text" placeholder="Masukkan Text" class="input-text px-4 py-3 round w-full rounded-md outline-none text-black" />
+                                    <!-- <button type="submit" class="bg-cyan-200 p-4 w-1/4 mx-auto rounded-md text-black font-bold text-xl">Convert</button> -->
+                                </form>
+                                <form id="binary-form" action="" class="hidden flex flex-col gap-4">
+                                    <p class="text-center text-2xl font-bold">BINARY TO TEXT</p>
+                                    <textarea type="number" rows="5" placeholder="Masukkan Biner" class="input-binary px-4 py-3 round w-full rounded-md outline-none text-black resize-none"></textarea>
+                                    <!-- <button type="submit" class="bg-cyan-200 p-4 w-1/4 mx-auto rounded-md text-black font-bold text-xl">Convert</button> -->
+                                </form>
+                                <p class="text-xl" id="hasil-convert">Hasil :</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paint -->
+                    <div id="paint-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-2/4 h-[600px] rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="paint-top" class="p-4 bg-gray-100 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="paint-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-xl flex justify-center w-full text-black">Paint</p>
+                            </div>
+                            <div id="paint-bottom" class="mt-20 bg-white p-4 flex flex-col gap-4">
+                                <canvas id="canvas" class="h-[435px] w-full"></canvas>
+                                <div class="flex gap-4 items-center">
+                                    <div class="clr w-[35px] h-[35px] bg-black rounded-full outline outline-black cursor-pointer" data-clr="#000"></div>
+                                    <div class="clr w-[35px] h-[35px] bg-red-500 rounded-full outline outline-black cursor-pointer" data-clr="red"></div>
+                                    <div class="clr w-[35px] h-[35px] bg-orange-500 rounded-full outline outline-black cursor-pointer" data-clr="orange"></div>
+                                    <div class="clr w-[35px] h-[35px] bg-blue-500 rounded-full outline outline-black cursor-pointer" data-clr="blue"></div>
+                                    <div class="clr w-[35px] h-[35px] bg-purple-500 rounded-full outline outline-black cursor-pointer" data-clr="purple"></div>
+                                    <div class="clr w-[35px] h-[35px] bg-lime-400 rounded-full outline outline-black cursor-pointer" data-clr="yellowgreen"></div>
+                                    <div class="clr w-[35px] h-[35px] bg-yellow-500 rounded-full outline outline-black cursor-pointer" data-clr="yellow"></div>
+                                    <div class="clr w-[35px] h-[35px] bg-white rounded-full outline outline-black cursor-pointer" data-clr="#fff"></div>
+                                    <button class="clear bg-green-600 px-4 py-2 rounded-lg">Clear</button>
+                                    <button class="save bg-red-600 px-4 py-2 rounded-lg">Save</button>
+                                    <input type="color" id="favcolor" value="#FFFFFF" class="cursor-pointer" />
+                                    <input type="range" name="ageInputName" id="ageInputId" value="15" min="10" max="20" oninput="ageOutputId.value = ageInputId.value" />
+                                    <output id="ageOutputId" class="text-black">15</output>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Status Connect -->
+                    <div id="status-connect" class="hidden flex items-center gap-4 bg-white w-fit text-black px-4 py-3 rounded-lg absolute bottom-6 -left-40">
+                        <i class="bx bx-wifi text-green-400 text-2xl"></i>
+                        <p>Connected to Internet</p>
+                    </div>
+
+                    <!-- Status Disconnect -->
+                    <div id="status-disconnect" class="hidden flex items-center gap-4 bg-white w-fit text-black px-4 py-3 rounded-lg absolute bottom-6 -left-40">
+                        <i class="bx bx-wifi-off text-gray-400 text-2xl"></i>
+                        <p>No Internet</p>
+                    </div>
+
+                    <!-- Video -->
+                    <div id="video-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-2/4 rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="video-top" class="p-4 bg-gray-100 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="video-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-xl flex justify-center w-full text-black">Video</p>
+                            </div>
+                            <div id="video-bottom" class="mt-14 bg-white p-4 flex flex-col gap-4">
+                                <video id="video-playing" class="w-full rounded-lg" controls autoplay></video>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audio -->
+                    <div id="audio-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-2/4 rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="audio-top" class="p-4 bg-gray-100 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="audio-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-xl flex justify-center w-full text-black">Music</p>
+                            </div>
+                            <div id="audio-bottom" class="mt-14 bg-white p-4 flex flex-col gap-4">
+                                <!-- <p id="music-name" class="text-center text-black font-bold">Music Name</p> -->
+                                <audio id="audio-playing" class="w-full rounded-lg" controls autoplay></audio>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Picture -->
+                    <div id="picture-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-2/4 rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="picture-top" class="p-4 bg-gray-100 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    -
+                                    <div id="picture-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-xl flex justify-center w-full text-black">Picture</p>
+                            </div>
+                            <div id="picture-bottom" class="mt-14 bg-white p-4 flex flex-col gap-4">
+                                <img id="picture-showing" alt="" class="bg-gray-200 w-full h-[450px] bg-cover bg-center bg-no-repeat rounded-lg" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Game -->
+                    <div id="game-app" class="shadow-2xl absolute top-[45%] left-1/2 overflow-hidden transform -translate-x-1/2 -translate-y-1/2 bg-white w-2/4 rounded-xl flex flex-col transition-all">
+                        <div class="relative w-full h-full">
+                            <div id="game-top" class="p-4 bg-gray-100 flex gap-4 items-center absolute left-0 right-0">
+                                <div class="flex gap-2">
+                                    <div id="game-close" class="w-6 h-6 rounded-full bg-red-600 hover:bg-red-800 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-yellow-500 hover:bg-yellow-700 transition-all cursor-pointer"></div>
+                                    <div class="w-6 h-6 rounded-full bg-green-500 hover:bg-green-700 transition-all cursor-pointer"></div>
+                                </div>
+                                <p class="text-xl flex justify-center w-full text-black">Game</p>
+                            </div>
+                            <div id="game-bottom" class="mt-14 bg-white p-4 flex flex-col gap-4">
+                                <!-- <img id="game-showing" alt="" class="bg-gray-200 w-full h-[450px] bg-cover bg-center bg-no-repeat" /> -->
+                                <iframe id="game-showing" frameborder="0" class="w-full h-[450px] rounded-lg bg-gray-400"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End : Layar Utama -->
+
+        <!-- Start : Layar Loading Turn On & Turn Off -->
+        <div id="preloader" class="preloader flex gap-4 flex-col absolute w-full h-full bg-black -z-50 justify-center items-center">
+            <img src="assets/cat-logo.svg" class="animate-bounce w-[225px]" />
+            <p class="text-white text-xl animate-pulse">Loading, Please Wait...</p>
+            <div class="bg-gray-600 h-3 w-60 rounded-full overflow-hidden">
+                <div class="loading-bar w-0 h-3 bg-gradient-to-r from-red-500 to-orange-400 animate-loading"></div>
+            </div>
+        </div>
+        <!-- Start : Layar Loading Turn On & Turn Off -->
+
+        <!-- Start : Layar Loading Masuk Layar Utama -->
+        <div id="preloader-main-screen" class="w-full min-h-screen bg-[url('assets/wallpaper1.jpg')] backdrop-blur-lg bg-cover bg-no-repeat bg-center text-white flex justify-center items-center">
+            <div class="loader-main-screen backdrop-blur-sm backdrop-brightness-50 w-full h-screen">
+                <div class="flex gap-4 flex-col justify-center items-center h-full w-1/4 m-auto">
+                    <img src="assets/cat-logo.svg" class="animate-bounce w-[225px]" />
+                    <p class="text-white text-xl animate-pulse">Loading, Please Wait...</p>
+                    <div class="bg-gray-600 h-3 w-60 rounded-full overflow-hidden">
+                        <div class="loading-bar w-0 h-3 bg-gradient-to-r from-red-500 to-orange-400 animate-loading"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Start : Layar Loading Masuk Layar Utama -->
+
+        <script src="main.js"></script>
+    </body>
+</html>
